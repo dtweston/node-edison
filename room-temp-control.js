@@ -42,12 +42,19 @@ Cylon.robot({
     lcd_screen: {
       driver: 'upm-jhd1313m1',
       connection: 'edison'
+    },
+    servo: {
+      driver: 'servo',
+      pin: 6,
+      connection: 'edison'
     }
   },
 
   work: function(my) {
     var set_temp = 0;
     var raw_room_temp = 0;
+    var servo_angle = 0;
+    var interval = 0;
 
     my.temp_setter.on("analogRead", function(val) {
       set_temp = val / 10;
@@ -58,9 +65,11 @@ Cylon.robot({
     });
 
     setInterval(function(){
+      var increment = 20;
       var B = 3975;
       var resistance = (1023-raw_room_temp)*10000/raw_room_temp;
       var room_temp = 1 / (Math.log(resistance/10000)/B+1/298.15)-273.15;
+      interval += 1;
       console.log("room temp : " + room_temp);
       console.log("Set room temp to be : " + set_temp);
       writeToScreenFirstLine(my.lcd_screen, room_temp+"");
@@ -68,13 +77,22 @@ Cylon.robot({
       if (room_temp > set_temp){ // if room is too hot, turn on relay
         my.relay.digitalWrite(1);
         my.led.brightness(255);
-        // writeToScreenFirstLine(my.lcd_screen, "Too Hot!");
       }
       else // turn off relay if room is cold
       {
         my.relay.digitalWrite(0);
         my.led.brightness(0);
-        // writeToScreenSecondLine(my.lcd_screen, "Too Cold!");
+      }
+      // let servo rotate every 5 seconds
+      if(interval >= 5)
+      {
+        interval = 0;
+        servo_angle += increment;
+        if(servo_angle > 150){
+            servo_angle = 0; //reset position if servo angle is greater than 135 (i.e. 180)
+        }
+        my.servo.angle(servo_angle);
+        console.log("servo angle: " + servo_angle);
       }
     }, 1000);
   }

@@ -5,7 +5,7 @@ var Cylon = require('cylon');
 Cylon
   .robot()
   .connection('edison', { adaptor: 'intel-iot' })
-  .device('servo', { driver: 'servo', pin: 3, connection: 'edison' })
+  .device('servo', { driver: 'servo', pin: 6, connection: 'edison' })
   .on('ready', function(my) {
     var angle = 0;
     my.servo.angle(angle);
