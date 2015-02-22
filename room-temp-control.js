@@ -17,6 +17,8 @@ Cylon.robot({
     edison: { adaptor: "intel-iot" }
   },
 
+  // todo: use sound to check whether baby is fuzzy and trigger
+  // fuzzy LED, servo, and vibration
   devices: {
     temp_setter: {
       driver: "analogSensor",
@@ -29,12 +31,12 @@ Cylon.robot({
       pin: 0,
       connection: 'edison'
     },
-    relay: {
+    fan_relay: {
       driver: 'direct-pin',
       pin: 4,
       connection: 'edison'
     },
-    led: {
+    fever_led: {
       driver: "led",
       pin: 3,
       connection: 'edison'
@@ -72,16 +74,16 @@ Cylon.robot({
       interval += 1;
       console.log("room temp : " + room_temp);
       console.log("Set room temp to be : " + set_temp);
-      writeToScreenFirstLine(my.lcd_screen, room_temp+"");
-      writeToScreenSecondLine(my.lcd_screen, set_temp+"");
-      if (room_temp > set_temp){ // if room is too hot, turn on relay
-        my.relay.digitalWrite(1);
-        my.led.brightness(255);
+      writeToScreenFirstLine(my.lcd_screen, room_temp + "");
+      writeToScreenSecondLine(my.lcd_screen, set_temp + "");
+      if (room_temp > set_temp){ // if room is too hot, turn on fan
+        my.fan_relay.digitalWrite(1);
+        my.fever_led.brightness(255);
       }
       else // turn off relay if room is cold
       {
-        my.relay.digitalWrite(0);
-        my.led.brightness(0);
+        my.fan_relay.digitalWrite(0);
+        my.fever_led.brightness(0);
       }
       // let servo rotate every 5 seconds
       if(interval >= 5)
