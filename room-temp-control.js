@@ -18,6 +18,11 @@ Cylon.robot({
       driver: 'analogSensor',
       pin: 0,
       connection: 'edison'
+    },
+    relay: {
+      driver: 'direct-pin',
+      pin: 4,
+      connection: 'edison'
     }
   },
 
@@ -39,6 +44,13 @@ Cylon.robot({
       var room_temp = 1 / (Math.log(resistance/10000)/B+1/298.15)-273.15;
       console.log("room temp : " + room_temp);
       console.log("Set room temp to be : " + set_temp);
+      if (room_temp > set_temp){ // if room is too hot, turn on relay
+        my.relay.digitalWrite(1);
+      }
+      else // turn off relay if room is cold
+      {
+        my.relay.digitalWrite(0);
+      }
     }, 1000);
   }
 
