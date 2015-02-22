@@ -4,7 +4,7 @@ var Cylon = require("cylon");
 var Client = require('node-edison-client/client');
 var NewGuid = require('./new-guid');
 
-var eddy = newClient(NewGuid());
+var eddy = new Client(NewGuid());
 
 function writeToScreenFirstLine(screen, message) {
   screen.setCursor(0,0);
@@ -80,6 +80,8 @@ Cylon.robot({
       return raw_temp_to_celsius(raw_room_temp);
     }, 1000);
 
+    eddy.connect('http://edisonserver.azurewebsites.net',function(){});
+
     setInterval(function(){
       var increment = 20;
       interval += 1;
@@ -98,16 +100,16 @@ Cylon.robot({
         my.fever_led.brightness(0);
       }
       // let servo rotate every 5 seconds
-      if(interval >= 5)
-      {
-        interval = 0;
-        servo_angle += increment;
-        if(servo_angle > 150){
-            servo_angle = 0; //reset position if servo angle is greater than 135 (i.e. 180)
-        }
-        my.servo.angle(servo_angle);
-        console.log("servo angle: " + servo_angle);
-      }
+      // if(interval >= 5)
+      // {
+      //   interval = 0;
+      //   servo_angle += increment;
+      //   if(servo_angle > 150){
+      //       servo_angle = 0; //reset position if servo angle is greater than 135 (i.e. 180)
+      //   }
+      //   my.servo.angle(servo_angle);
+      //   console.log("servo angle: " + servo_angle);
+      // }
     }, 1000);
   }
 
