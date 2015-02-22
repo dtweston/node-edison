@@ -7,6 +7,7 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
-      "cylon-intel-iot": "*"
+      "cylon-intel-iot": "*",
+      "socket.io-client": "*"
   }
 }
