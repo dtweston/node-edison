@@ -8,6 +8,6 @@
   },
   "dependencies": {
       "cylon-intel-iot": "*",
-      "socket.io-client": "*"
+      "node-edison-client" : "git://github.com/tweir/node-edison-client.git"
   }
 }
