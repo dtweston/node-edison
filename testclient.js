@@ -14,22 +14,15 @@ if (process.argv.length>2)
   id = process.argv[2];
 }
 
-var Client = require('./client');
+var Client = require('node-edison-client/client');
 var eddy = new Client(id);
+eddy.read('test-sensor',function(){
+  console.log("read called");
+  return 42;
+},1000);
+eddy.connect('http://localhost:4222',function(){});
 
-eddy.connect('http://edisonserver.azurewebsites.net');
-
-//var socket = require('socket.io-client')('http://localhost:4222');
-var socket = require('socket.io-client')('http://edisonserver.azurewebsites.net');
-  socket.on('connect', function(){
-    console.log("connected");
-    socket.emit('init',{clientType:'eddy',id: id});
-  });
-  socket.on('event', function(data){console.log("event " + data)});
-  socket.on('disconnect', function(){
-    console.log("disconnected");
-  });
-  socket.on('welcome', function(data){
-    console.log("Welcome Message ");
-    console.log(data);
-  });
+setTimeout(function(){
+  console.log("shutting down...");
+  eddy.shutdown();
+},10000);
