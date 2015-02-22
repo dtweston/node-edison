@@ -8,11 +8,16 @@ function guid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
-var id = "64a57a29-9674-d633-d04c-b83c56ae6cb2";
+var id = guid();
 if (process.argv.length>2)
 {
   id = process.argv[2];
 }
+
+var Client = require('./client');
+var eddy = new Client(id);
+
+eddy.connect('http://edisonserver.azurewebsites.net');
 
 //var socket = require('socket.io-client')('http://localhost:4222');
 var socket = require('socket.io-client')('http://edisonserver.azurewebsites.net');
