@@ -8,7 +8,7 @@ Cylon
   .on('ready', function(my) {
      var sensorVal = 0;
      my.rotary.on('analogRead', function(data) {
-      sensorVal = data;
+      sensorVal = data / 10;
       console.log("Reading: " + sensorVal);
     });
   })
