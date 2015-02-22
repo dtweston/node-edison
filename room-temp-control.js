@@ -2,6 +2,16 @@
 
 var Cylon = require("cylon");
 
+function writeToScreenFirstLine(screen, message) {
+  screen.setCursor(0,0);
+  screen.write(message);
+}
+
+function writeToScreenSecondLine(screen, message) {
+  screen.setCursor(1,0);
+  screen.write(message);
+}
+
 Cylon.robot({
   connections: {
     edison: { adaptor: "intel-iot" }
@@ -28,6 +38,10 @@ Cylon.robot({
       driver: "led",
       pin: 3,
       connection: 'edison'
+    },
+    lcd_screen: {
+      driver: 'upm-jhd1313m1',
+      connection: 'edison'
     }
   },
 
@@ -49,14 +63,18 @@ Cylon.robot({
       var room_temp = 1 / (Math.log(resistance/10000)/B+1/298.15)-273.15;
       console.log("room temp : " + room_temp);
       console.log("Set room temp to be : " + set_temp);
+      writeToScreenFirstLine(my.lcd_screen, room_temp+"");
+      writeToScreenSecondLine(my.lcd_screen, set_temp+"");
       if (room_temp > set_temp){ // if room is too hot, turn on relay
         my.relay.digitalWrite(1);
         my.led.brightness(255);
+        // writeToScreenFirstLine(my.lcd_screen, "Too Hot!");
       }
       else // turn off relay if room is cold
       {
         my.relay.digitalWrite(0);
         my.led.brightness(0);
+        // writeToScreenSecondLine(my.lcd_screen, "Too Cold!");
       }
     }, 1000);
   }
