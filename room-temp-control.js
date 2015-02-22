@@ -23,6 +23,11 @@ Cylon.robot({
       driver: 'direct-pin',
       pin: 4,
       connection: 'edison'
+    },
+    led: {
+      driver: "led",
+      pin: 3,
+      connection: 'edison'
     }
   },
 
@@ -46,10 +51,12 @@ Cylon.robot({
       console.log("Set room temp to be : " + set_temp);
       if (room_temp > set_temp){ // if room is too hot, turn on relay
         my.relay.digitalWrite(1);
+        my.led.brightness(255);
       }
       else // turn off relay if room is cold
       {
         my.relay.digitalWrite(0);
+        my.led.brightness(0);
       }
     }, 1000);
   }
