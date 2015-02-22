@@ -1,6 +1,10 @@
 "use strict";
 
 var Cylon = require("cylon");
+var Client = require('node-edison-client/client');
+var NewGuid = require('./new-guid');
+
+var eddy = newClient(NewGuid());
 
 function writeToScreenFirstLine(screen, message) {
   screen.setCursor(0,0);
@@ -11,6 +15,12 @@ function writeToScreenSecondLine(screen, message) {
   screen.setCursor(1,0);
   screen.write(message);
 }
+
+function raw_temp_to_celsius(raw_room_temp) {
+  var B = 3975;
+  var resistance = (1023-raw_room_temp)*10000/raw_room_temp;
+  return 1 / (Math.log(resistance/10000)/B+1/298.15)-273.15;
+ }
 
 Cylon.robot({
   connections: {
@@ -64,12 +74,14 @@ Cylon.robot({
       raw_room_temp = data;
     });
 
+    eddy.read('current_temp', function() {
+      return raw_temp_to_celsius(raw_room_temp);
+    }, 1000);
+
     setInterval(function(){
       var increment = 20;
-      var B = 3975;
-      var resistance = (1023-raw_room_temp)*10000/raw_room_temp;
-      var room_temp = 1 / (Math.log(resistance/10000)/B+1/298.15)-273.15;
       interval += 1;
+      var room_temp = raw_temp_to_celsius(raw_room_temp);
       console.log("room temp : " + room_temp);
       console.log("Set room temp to be : " + set_temp);
       writeToScreenFirstLine(my.lcd_screen, room_temp+"");
