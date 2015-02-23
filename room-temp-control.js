@@ -133,6 +133,7 @@ Cylon.robot({
     eddy.on('set_music', function(data) {
       console.log('Got set_music command');
       music_on = data.status;
+      Music.play_music();
       console.log(music_on + '');
     });
 
@@ -169,9 +170,6 @@ Cylon.robot({
         }
         else{
           my.vibration_relay.digitalWrite(0);
-        }
-        if (music_on) {
-          music.play_music();
         }
       }
       else{
