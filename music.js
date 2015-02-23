@@ -8,12 +8,6 @@ var notes = "ccggaagffeeddc ";
 var beats = [ 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 4 ];
 var tempo = 300;
 
-var log = console.log;
-console.log = function() {
-  log.call(console, Date.now());
-  log.apply(console, arguments);
-};
-
 function play_tone(pin, tone, duration, callback) {
   util.log('Playing ' + tone + ' for duration ' + duration);
   util.log('Period: ' + 1000000.0 / tone);
