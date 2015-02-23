@@ -3,6 +3,7 @@
 var Cylon = require("cylon");
 var Client = require('node-edison-client/client');
 var NewGuid = require('./new-guid');
+var Music = require('./music');
 
 var eddy = new Client("baby status");
 
@@ -89,6 +90,7 @@ Cylon.robot({
     var interval = 0;
     var fan_on = false;
     var rocking_on = false;
+    var music_on = false;
 
     // my.temp_setter.on("analogRead", function(val) {
     //   set_temp = val / 10;
@@ -128,6 +130,12 @@ Cylon.robot({
       console.log(rocking_on + "");
     });
 
+    eddy.on('set_music', function(data) {
+      console.log('Got set_music command');
+      music_on = data.status;
+      console.log(music_on + '');
+    });
+
     eddy.connect('http://edisonserver.azurewebsites.net',function(){});
 
     setInterval(function(){
@@ -161,6 +169,9 @@ Cylon.robot({
         }
         else{
           my.vibration_relay.digitalWrite(0);
+        }
+        if (music_on) {
+          music.play_music();
         }
       }
       else{
