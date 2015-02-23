@@ -61,6 +61,7 @@ function loop(pin) {
     if (err) {
       util.log('Error running series! ' + err);
     }
+    pin.enable(false);
   });
 }
 
@@ -68,12 +69,8 @@ module.exports = {
   play_music: function play_music() {
     console.log('MRAA ' + mraa.getVersion());
 
-    fakePin = {
-      period_us: function() {},
-      write: function() {}
-    };
-    pin = new mraa.Pwm(3);
-    //loop(fakePin);
+    var pin = new mraa.Pwm(3);
+    pin.enable(true);
     loop(pin);
   }
 };
