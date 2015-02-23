@@ -64,16 +64,18 @@ function loop(pin) {
   });
 }
 
-function play_music() {
-  console.log('MRAA ' + mraa.getVersion());
+module.exports = {
+  play_music: function play_music() {
+    console.log('MRAA ' + mraa.getVersion());
 
-  fakePin = {
-    period_us: function() {},
-    write: function() {}
+    fakePin = {
+      period_us: function() {},
+      write: function() {}
     };
-  pin = new mraa.Pwm(3);
-  //loop(fakePin);
-  loop(pin);
+    pin = new mraa.Pwm(3);
+    //loop(fakePin);
+    loop(pin);
+  }
 }
 
 module.exports = play_music;
