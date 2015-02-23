@@ -11,7 +11,7 @@ var tempo = 300;
 function play_tone(pin, tone, duration, callback) {
   util.log('Playing ' + tone + ' for duration ' + duration);
   util.log('Period: ' + 1000000.0 / tone);
-  pin.period(1000000.0 / tone);
+  pin.period_us(1000000.0 / tone);
   pin.write(0.5);
   setTimeout(function() {
     pin.write(0);
@@ -76,6 +76,5 @@ module.exports = {
     //loop(fakePin);
     loop(pin);
   }
-}
+};
 
-module.exports = play_music;
