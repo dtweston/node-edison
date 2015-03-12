@@ -2,6 +2,7 @@
 
 var Cylon = require("cylon");
 var request = require('request');
+var Music = require('./music');
 
 function writeToScreenFirstLine(screen, message) {
   screen.setCursor(0,0);
@@ -39,6 +40,7 @@ function writeToScreen(screen, message, line){
   if(line >= sub_messages.length)
     return;
   screen.clear();
+  screen.setColor(53, 39, 249);
   writeToScreenFirstLine(screen, sub_messages[line]);
   if(line + 1 < sub_messages.length){
     writeToScreenSecondLine(screen, sub_messages[line + 1]);
@@ -76,6 +78,10 @@ Cylon.robot({
       driver: 'button',
       pin: 4,
       connection: 'edison'
+    },
+    buzzer: {
+      driver: 'direct-pin',
+      pin: 2
     }
 
     // servo: {
@@ -125,12 +131,19 @@ Cylon.robot({
         });
 
         response.on('end', function(){
+          var old_unread_count = inbox_unread_count;
           var json_messages = JSON.parse(response.body);
           inbox_unread_count = json_messages.messages.length;
           console.log("inbox_unread_count: " + inbox_unread_count);
           for (var i=0; i < inbox_unread_count; i++) {
             messages[i] = json_messages.messages[i].body.plain;
             console.log("MESSAGE" + i + ": " + messages[i]);
+          }
+
+          if (inbox_unread_count > old_unread_count) {
+            my.buzzer.digitalWrite(1);
+          }else{
+            my.buzzer.digitalWrite(0);
           }
 
           if(inbox_unread_count > 0){
@@ -140,8 +153,8 @@ Cylon.robot({
           }else{
             my.green_led.turnOn();
             my.red_led.turnOff();
-            writeToScreenFirstLine(my.lcd_screen, "                 ");
-            writeToScreenSecondLine(my.lcd_screen, "                 ");
+            my.lcd_screen.clear();
+            my.lcd_screen.setColor(0, 0, 0);
           }
         });
       });
