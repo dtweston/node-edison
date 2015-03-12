@@ -2,10 +2,12 @@ var request = require('request');
 
 
 //https://www.yammer.com/api/v1/messages/inbox.json?filter=unarchived%3Binbox_unseen&threaded=extended&exclude_own_messages_from_unseen=true&_=1426184657399
+//https://www.yammer.com/api/v1/messages/inbox.json?filter=unarchived%3Binbox_unseen&threaded=extended&exclude_own_messages_from_unseen=true&_=1426185351762
 
-request.get('https://www.yammer.com/api/v1/messages/inbox.json?filter=unarchived%3Binbox_unseen&threaded=extended&exclude_own_messages_from_unseen=true', {
+
+request.get('https://www.yammer.com/api/v1/messages/inbox.json?filter=unarchived%3Binbox_unseen&threaded=extended&exclude_own_messages_from_unseen=true&', {
   'auth': {
-    'bearer': 'lbbRDdqRosJ3e8EFuAr4xg'
+    'bearer': '[bear token]'
   }
 }).on('response', function(response) {
   response.body = "";
@@ -16,11 +18,11 @@ request.get('https://www.yammer.com/api/v1/messages/inbox.json?filter=unarchived
     //console.log(response.statusCode);
     //console.log(response.body);
     var jsonMessages = JSON.parse(response.body);
-    //console.log(jsonMessages);
+    console.log(jsonMessages);
     var messages = [];
     for (var i=0; i < jsonMessages.messages.length; i++) {
       messages[i] = jsonMessages.messages[i].body.plain;
-      console.log(messages[i]);
+      console.log("MESSAGE" + i + ": " + messages[i]);
     }
   });
 });
