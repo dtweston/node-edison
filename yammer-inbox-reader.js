@@ -13,13 +13,32 @@ function writeToScreenSecondLine(screen, message) {
   screen.write(message);
 }
 
-function writeToScreen(screen, message, line){
-  var sub_messages = [];
-  sub_messages[0] = "pg is awesome";
-  sub_messages[1] = "dj is awesome";
-  sub_messages[2] = "grace is awesome";
-  sub_messages[3] = "mom is awesome";
+function getMessageComponents(messageString) {
+  var messageComponents = [];
+  var div = Math.floor(messageString.length/16);
+  var rem = (messageString.length%16);
+  var start = 0;
+  var lcdlength = 16;
 
+  for (var i=0; i < div; i++) {
+    var end = start + lcdlength;
+    messageComponents[i] = messageString.substring(start, end);
+    start = end;
+  }
+
+  if (rem > 0) {
+    start = end;
+    end = end + rem;
+    messageComponents[div] = messageString.substring(start, end);
+  };
+  return messageComponents;
+}
+
+function writeToScreen(screen, message, line){
+  var sub_messages = getMessageComponents(message);
+  if(line >= sub_messages.length)
+    return;
+  screen.clear();
   writeToScreenFirstLine(screen, sub_messages[line]);
   if(line + 1 < sub_messages.length){
     writeToScreenSecondLine(screen, sub_messages[line + 1]);
@@ -47,6 +66,16 @@ Cylon.robot({
     lcd_screen: {
       driver: 'upm-jhd1313m1',
       connection: 'edison'
+    },
+    up_button: {
+      driver: 'button',
+      pin: 3,
+      connection: 'edison'
+    },
+    down_button: {
+      driver: 'button',
+      pin: 4,
+      connection: 'edison'
     }
 
     // servo: {
@@ -58,10 +87,30 @@ Cylon.robot({
 
   work: function(my) {
     var inbox_unread_count = 0;
-    var test_i = 0;
+    var current_line = 0;
+    var current_message = 0;
     var messages = [];
 
+
+    my.up_button.on('release', function() {
+      console.log('up_button released');
+      if(current_line >= 1)
+      {
+        current_line -= 1;
+        writeToScreen(my.lcd_screen, messages[0], current_line);
+      }
+    });
+
+    my.down_button.on('release', function() {
+      console.log('down_button released');
+
+      current_line += 1;
+      writeToScreen(my.lcd_screen, messages[0], current_line);
+
+    });
+
     setInterval(function(){
+
       console.log("check yammer for inbox messages.");
 
       request.get('https://www.yammer.com/api/v1/messages/inbox.json?filter=unarchived%3Binbox_unseen&threaded=extended&exclude_own_messages_from_unseen=true&', {
@@ -85,22 +134,17 @@ Cylon.robot({
           }
 
           if(inbox_unread_count > 0){
-            my.red_led.brightness(255);
-            my.green_led.brightness(0);
-            // writeToScreenFirstLine(my.lcd_screen, messages[0]);
+            my.red_led.turnOn();
+            my.green_led.turnOff();
+            writeToScreen(my.lcd_screen, messages[0], current_line);
           }else{
-            my.green_led.brightness(255);
-            my.red_led.brightness(0);
-            // writeToScreenFirstLine(my.lcd_screen, "                 ");
-            // writeToScreenSecondLine(my.lcd_screen, "                 ");
+            my.green_led.turnOn();
+            my.red_led.turnOff();
+            writeToScreenFirstLine(my.lcd_screen, "                 ");
+            writeToScreenSecondLine(my.lcd_screen, "                 ");
           }
         });
       });
-
-      test_i = test_i % 4;
-      writeToScreen(my.lcd_screen, "", test_i);
-      test_i = test_i + 1;
-
     }, 2000);
   }
 
